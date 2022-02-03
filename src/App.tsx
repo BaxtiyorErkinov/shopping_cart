@@ -1,11 +1,11 @@
 import React, { useState, useEffect } from "react";
 import axios from "axios";
 import { useFetching } from "./hooks/useFetching";
-import { Drawer, LinearProgress, Grid, Badge } from "@mui/material";
-import { AddShoppingCart } from "@mui/icons-material";
-import { Wrapper, StyledButton } from "./App.styled";
+import { Drawer, LinearProgress, Grid } from "@mui/material";
+import { Wrapper } from "./App.styled";
 import Product from "./components/Product";
 import Cart from "./components/Cart";
+import Toolbar from "./components/Toolbar";
 
 export type ProductTypes = {
   id: number;
@@ -21,6 +21,15 @@ function App() {
   const [data, setData] = useState<ProductTypes[]>([]);
   const [openCart, setOpen] = useState<boolean>(false);
   const [cartItems, setCartItems] = useState<ProductTypes[]>([]);
+  const [category, setCategory] = useState<string>("");
+
+  function getfilteredProducts() {
+    if (category) {
+      return [...data].filter((el) => el.category === category);
+    }
+    return data;
+  }
+  const filteredProducts = getfilteredProducts();
 
   const [fetchProducts, isLoading, isError] = useFetching(async () => {
     await axios
@@ -74,13 +83,14 @@ function App() {
           removeFromCart={removeFormCart}
         />
       </Drawer>
-      <StyledButton onClick={() => setOpen(true)}>
-        <Badge badgeContent={getTotalItems(cartItems)} color="error">
-          <AddShoppingCart />
-        </Badge>
-      </StyledButton>
+      <Toolbar
+        setOpen={setOpen}
+        getTotalItems={getTotalItems}
+        cartItems={cartItems}
+        setCategory={setCategory}
+      />
       <Grid container spacing={3}>
-        {data?.map((product) => (
+        {filteredProducts?.map((product: ProductTypes) => (
           <Grid item xs={12} sm={4} key={product.id}>
             <Product product={product} addToCart={addToCart} />
           </Grid>
