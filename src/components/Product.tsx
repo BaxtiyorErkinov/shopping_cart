@@ -14,7 +14,7 @@ const Product: FC<Props> = ({ product, addToCart }) => {
 			<img src={product.image} alt={product.title} />
 			<div>
 				<h3>{product.title}</h3>
-				<p>{product.description}</p>
+				<p>{product.description.slice(0, 40)} ...</p>
 				<h3>${product.price}</h3>
 			</div>
 			<Button onClick={() => addToCart(product)}>Add to Cart</Button>
